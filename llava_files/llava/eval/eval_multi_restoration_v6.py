@@ -22,7 +22,8 @@ from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_i
 from llava.model.builder import load_pretrained_model
 from llava.utils import disable_torch_init
 
-sys.path.insert(0, "/nfsd/lttm4/tesisti/gramatchi/v6")
+# severity_levels.py is in training_release/dataset_generation, override with RESTORATION_DATASET_DIR
+sys.path.insert(0, os.environ.get("RESTORATION_DATASET_DIR", "/nfsd/lttm4/tesisti/gramatchi/training_release/dataset_generation"))
 from severity_levels import JPEG_QUALITY, NOISE_SIGMA, GAMMA
 
 JPEG_METHODS = ["gauss_0.2x", "median_k3", "bilateral_d3", "bilateral_d5", "bilateral_d9", "nlm_tw5_sw11", "bndry_k3"]

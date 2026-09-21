@@ -55,8 +55,9 @@ that exact photo.
    stopping, non-strict DeepSpeed resume), `train_mem_sdpa.py` (sdpa attention
    instead of flash-attn), `scripts/zero2.json` (added `gradient_clipping`, without
    it the loss blew up once), and `eval_multi_restoration_v6.py`.
-   `train.py` and the eval script import `corruptors.py` from `common/`; set
-   `RESTORATION_COMMON_DIR` if it is not at the default location.
+   `train.py` and the eval script import `corruptors.py` from `common/` and
+   `severity_levels.py` from `dataset_generation/`; set `RESTORATION_COMMON_DIR` and
+   `RESTORATION_DATASET_DIR` if they are not at the default locations.
 4. **Train**: `sbatch llava_files/sbatch/run_lora_full_multi_v6.sh` (3 epochs,
    about 12 h on one L40S, resumable). Hyperparameters are LLaVA's LoRA recipe,
    with `lora_r=64`, and evaluation and checkpointing every 3600 steps with early
@@ -64,6 +65,20 @@ that exact photo.
 5. **Final checkpoint**: intermediate checkpoints only contain the LoRA weights, so
    checkpoint-28800 is rebuilt with `sbatch checkpoint_tools/run_rescue_checkpoint_28800.sh`.
 6. **Evaluate**: `sbatch llava_files/sbatch/run_eval_v6_ckpt28800.sh`.
+
+## Trying the model on a photo
+
+Download the adapter from Hugging Face and run `demo.py` from inside the LLaVA repo
+(set up as in step 3). It prints the model's answer for one photo:
+
+```
+cd <LLaVA repo>
+python <this repo>/demo.py \
+    --model-path <folder with the adapter, name must contain "lora"> \
+    --image photo.png
+```
+
+A GPU with about 16 GB is needed.
 
 Create `logs/` first (`mkdir -p logs`), the sbatch scripts write there.
 Paths in the scripts (`/nfsd/lttm4/...`, `/home/gramatchin/...`) are the ones on
