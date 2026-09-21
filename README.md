@@ -29,8 +29,10 @@ Distortions are not saved to disk. The manifest lists, for each example, the
 clean photo, the distortions to apply (type, strength, order) and the answer
 text. `train.py` applies the distortions on the fly when a sample is loaded.
 The answer names the detected types, the corruption order, the restoration order
-(the reverse) and, for each step, the best method found by exhaustive search on
-that exact photo.
+(the reverse) and, for each step, the method that gave the best SSIM for that
+distortion alone on that exact photo (found by exhaustive search). For pairs and
+triples the same per-distortion method is reused, it is not searched again for
+the combination.
 
 ## Reproducing
 
@@ -88,5 +90,17 @@ The order experiment (`experiments/`) was run once on 15 photos and is included
 with its results. `experiment_gamma_restoration_large.py` was written on a Mac
 (`caffeinate`, local paths) and needs those edited before it runs elsewhere.
 
-Environment notes: PyTorch 2.1.2, transformers 4.37.2, deepspeed 0.12.6, peft
-0.4.0 (the versions LLaVA pins for training; newer peft and deepspeed break it).
+## Environment
+
+`environment.yml` (conda, Python 3.10) and `requirements.txt` (pip only) list the
+exact package versions we used, among them PyTorch 2.1.2 (CUDA 12.1),
+transformers 4.37.2, deepspeed 0.12.6 and peft 0.4.0. These are the versions
+LLaVA pins for training, newer peft and deepspeed break it.
+
+```
+conda env create -f environment.yml
+```
+
+or, in an existing Python 3.10 environment, `pip install -r requirements.txt`. The
+requirements file installs LLaVA itself from GitHub at the commit given in step 3;
+`environment.yml` does not, install it from your LLaVA clone with `pip install -e .`.
